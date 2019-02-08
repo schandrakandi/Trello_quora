@@ -15,11 +15,10 @@ import java.io.Serializable;
 @Table(name = "users")
 @NamedQueries(
         {
-                @NamedQuery(name = "userByUuid", query = "select u from UserEntity u where u.uuid = :uuid"),
+                @NamedQuery(name = "userByUserame", query = "select u from UserEntity u where username = :username"),
                 @NamedQuery(name = "userByEmail", query = "select u from UserEntity u where u.email =:email")
         }
 )
-
 
 public class UserEntity implements Serializable {
 
@@ -29,6 +28,7 @@ public class UserEntity implements Serializable {
     private Integer id;
 
     @Column(name = "uuid")
+    @NotNull
     @Size(max = 64)
     private String uuid;
 

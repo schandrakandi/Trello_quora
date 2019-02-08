@@ -20,9 +20,9 @@ public class UserDao {
         return userEntity;
     }
 
-    public UserEntity getUser(final String userUuid) {
+    public UserEntity getUser(final String userName) {
         try {
-            return entityManager.createNamedQuery("userByUuid", UserEntity.class).setParameter("uuid", userUuid)
+            return entityManager.createNamedQuery("userByUserame", UserEntity.class).setParameter("username", userName)
                     .getSingleResult();
         } catch (NoResultException nre) {
             return null;
