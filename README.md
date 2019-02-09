@@ -26,6 +26,28 @@ The following API endpoints are implemented in 'AdminController' class:
 
 This endpoint is used to delete a user from the Quora Application. Only an admin is authorized to access this endpoint.
 
+The following API endpoints are implemented in 'QuestionController' class:
+
+1. createQuestion - "/question/create"
+
+This endpoint is used to create a question in the Quora Application which will be shown to all the users. Any user can access this endpoint.
+
+2. getAllQuestions - "/question/all"
+
+This endpoint is used to fetch all the questions that have been posted in the application by any user. Any user can access this endpoint.
+
+3. editQuestionContent - "/question/edit/{questionId}"
+
+This endpoint is used to edit a question that has been posted by a user. Note, only the owner of the question can edit the question.  
+
+
+4. deleteQuestion - "/question/delete/{questionId}"
+
+This endpoint is used to delete a question that has been posted by a user. Note, only the question owner of the question or admin can delete a question.
+
+5. getAllQuestionsByUser - "question/all/{userId}"
+
+This endpoint is used to fetch all the questions posed by a specific user. Any user can access this endpoint.
 
 
 
