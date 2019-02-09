@@ -4,6 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,35 +13,36 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
+
 @Entity
 @Table(name = "question")
 @NamedQueries({
-        @NamedQuery(name = "test", query = "select ut from UserAuthTokenEntity ut where ut.accessToken = :accessToken ")
+        @NamedQuery(name= "allQuestions",query = "select q from QuestionEntity q ")
 })
 public class QuestionEntity implements Serializable {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "uuid")
-    @NotNull
-    @Size(max = 64)
+    @Column(name = "UUID")
+    @Size(max = 200)
     private String uuid;
 
-    @Column(name = "content")
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "USER_ID")
+    private UserEntity user;
+
+    @Column(name = "CONTENT")
     @NotNull
     @Size(max = 500)
     private String content;
 
-    @Column(name = "date")
+    @Column(name = "DATE")
     @NotNull
     private ZonedDateTime date;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user_id;
 
     public Integer getId() {
         return id;
@@ -57,6 +60,14 @@ public class QuestionEntity implements Serializable {
         this.uuid = uuid;
     }
 
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
     public String getContent() {
         return content;
     }
@@ -72,15 +83,6 @@ public class QuestionEntity implements Serializable {
     public void setDate(ZonedDateTime date) {
         this.date = date;
     }
-
-    public UserEntity getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(UserEntity user_id) {
-        this.user_id = user_id;
-    }
-
     @Override
     public boolean equals(Object obj) {
         return new EqualsBuilder().append(this, obj).isEquals();

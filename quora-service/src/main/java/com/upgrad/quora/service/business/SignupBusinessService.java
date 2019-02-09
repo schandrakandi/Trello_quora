@@ -1,6 +1,8 @@
 package com.upgrad.quora.service.business;
 
+import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserEntity;
+import com.upgrad.quora.service.exception.SignUpRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -10,13 +12,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class SignupBusinessService {
 
     @Autowired
-    private UserAdminBusinessService userAdminBusinessService;
+    private UserDao userDao;
+
+    @Autowired
+    private PasswordCryptographyProvider passwordCryptographyProvider;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserEntity signup(UserEntity userEntity) {
-        return userAdminBusinessService.createUser(userEntity);
+    public UserEntity signup(UserEntity userEntity,String userName,String email) throws SignUpRestrictedException {
+
+        if (userDao.getUserByUserName(userName) != null) {
+            throw new SignUpRestrictedException("SGR-001", "Try any other Username, this Username has already been taken");
+        }
+        else if (userDao.getUserByEmail(email) != null) {
+            throw new SignUpRestrictedException("SGR-002", "This user has already been registered, try with any other emailId");
+        }
+        else {
+
+            String[] encryptedText = passwordCryptographyProvider.encrypt(userEntity.getPassword());
+            userEntity.setSalt(encryptedText[0]);
+            userEntity.setPassword(encryptedText[1]);
+
+            return userDao.createUser(userEntity);
+        }
     }
-
 }
-
-
