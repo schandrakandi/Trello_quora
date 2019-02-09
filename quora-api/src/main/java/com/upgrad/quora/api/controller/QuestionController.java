@@ -3,9 +3,9 @@ package com.upgrad.quora.api.controller;
 import com.upgrad.quora.api.model.QuestionDetailsResponse;
 import com.upgrad.quora.api.model.QuestionRequest;
 import com.upgrad.quora.api.model.QuestionResponse;
-import com.upgrad.quora.service.business.GetAllQuestionsBusinessService;
+import com.upgrad.quora.service.business.AuthorizationService;
 import com.upgrad.quora.service.business.CreateQuestionBusinessService;
-import com.upgrad.quora.service.dao.UserDao;
+import com.upgrad.quora.service.business.GetAllQuestionsBusinessService;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
@@ -30,11 +30,12 @@ public class QuestionController {
 
     @Autowired
     private CreateQuestionBusinessService createQuestionBusinessService;
+
     @Autowired
     private GetAllQuestionsBusinessService getAllQuestionsBusinessService;
 
     @Autowired
-    private UserDao userDao;
+    AuthorizationService authorizationService;
 
     @RequestMapping(method = RequestMethod.POST, path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(@RequestHeader("accessToken") final String accessToken, final QuestionRequest questionRequest) throws AuthorizationFailedException {
@@ -53,16 +54,20 @@ public class QuestionController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("accessToken") final String accessToken) throws AuthorizationFailedException {
-        String[] bearerToken = accessToken.split("Bearer ");
-        UserAuthTokenEntity userAuthTokenEntity = getAllQuestionsBusinessService.verifyAuthToken(bearerToken[1]);
-        List<QuestionEntity> allQuestions = new ArrayList<QuestionEntity>();
-        allQuestions.addAll(getAllQuestionsBusinessService.getAllQuestions());
-        List<QuestionDetailsResponse> questionDetailsResponses = new ArrayList<QuestionDetailsResponse>();
+        List<QuestionEntity> questionEntityList = getAllQuestionsBusinessService.getAllQuestions(accessToken);
 
-        for (QuestionEntity question : allQuestions) {
-            QuestionDetailsResponse questionDetailsResponse=new QuestionDetailsResponse();
-            questionDetailsResponses.add(questionDetailsResponse.id(question.getUuid()).content(question.getContent()));
+        List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<QuestionDetailsResponse>();
+        if (!questionEntityList.isEmpty()) {
+
+            for (QuestionEntity questionEntity : questionEntityList) {
+                QuestionDetailsResponse questionDetailsResponse = new QuestionDetailsResponse();
+                questionDetailsResponse.setId(questionEntity.getUuid());
+                questionDetailsResponse.setContent(questionEntity.getContent());
+
+                questionDetailsResponseList.add(questionDetailsResponse);
+            }
+
         }
-        return new ResponseEntity<List<QuestionDetailsResponse>>(questionDetailsResponses,HttpStatus.OK);
+        return new ResponseEntity<>(questionDetailsResponseList, HttpStatus.OK);
     }
 }
