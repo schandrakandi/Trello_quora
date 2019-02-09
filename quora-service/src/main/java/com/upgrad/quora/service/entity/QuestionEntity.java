@@ -13,12 +13,14 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-
 @Entity
 @Table(name = "question")
 @NamedQueries({
+        @NamedQuery(name = "questionByQUuid", query = "select q from QuestionEntity q where q.uuid =:uuid"),
+        @NamedQuery(name= "allQuestionsByUserId",query = "select q from QuestionEntity q where q.user = :user"),
         @NamedQuery(name= "allQuestions",query = "select q from QuestionEntity q "),
         @NamedQuery(name= "questionById",query = "select q from QuestionEntity q where q.uuid = :uuid")
+
 })
 public class QuestionEntity implements Serializable {
 
