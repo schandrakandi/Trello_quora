@@ -29,9 +29,6 @@ public class CreateAnswerBusinessService implements EndPointIdentifier {
     @Autowired
     QuestionDao questionDao;
 
-    @Autowired
-    QuestionValidityCheckService questionValidityCheckService;
-
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity createAnswer(final AnswerEntity answerEntity, final String questionId, final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
         UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorization);

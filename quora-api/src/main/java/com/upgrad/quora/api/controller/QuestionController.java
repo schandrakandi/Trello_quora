@@ -31,7 +31,6 @@ public class QuestionController {
     @Autowired
     private GetAllQuestionsByUserBusinessService getAllQuestionsByUserBusinessService;
 
-
     @Autowired
     UserAdminBusinessService userAdminBusinessService;
 
@@ -41,12 +40,17 @@ public class QuestionController {
     @Autowired
     DeleteQuestionBusinessService deleteQuestionBusinessService;
 
-    @Autowired
-    AuthorizationService authorizationService;
 
     @RequestMapping(method = RequestMethod.POST, path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(final QuestionRequest questionRequest, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
-
+        // Logic to handle Bearer <accesstoken>
+        // User can give only Access token or Bearer <accesstoken> as input.
+        String bearerToken = null;
+        try {
+            bearerToken = authorization.split("Bearer ")[1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            bearerToken = authorization;
+        }
         // Create question entity
         final QuestionEntity questionEntity = new QuestionEntity();
         questionEntity.setContent(questionRequest.getContent());
@@ -54,16 +58,23 @@ public class QuestionController {
         questionEntity.setDate(ZonedDateTime.now());
 
         // Return response with created question entity
-        final QuestionEntity createdQuestionEntity = createQuestionBusinessService.createQuestion(questionEntity, authorization);
+        final QuestionEntity createdQuestionEntity = createQuestionBusinessService.createQuestion(questionEntity, bearerToken);
         QuestionResponse questionResponse = new QuestionResponse().id(createdQuestionEntity.getUuid()).status("QUESTION CREATED");
         return new ResponseEntity<QuestionResponse>(questionResponse, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
-
+        // Logic to handle Bearer <accesstoken>
+        // User can give only Access token or Bearer <accesstoken> as input.
+        String bearerToken = null;
+        try {
+            bearerToken = authorization.split("Bearer ")[1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            bearerToken = authorization;
+        }
         // Get all questions
-        List<QuestionEntity> allQuestions = getAllQuestionsBusinessService.getAllQuestions(authorization);
+        List<QuestionEntity> allQuestions = getAllQuestionsBusinessService.getAllQuestions(bearerToken);
 
         // Create response
         List<QuestionDetailsResponse> allQuestionDetailsResponses = new ArrayList<QuestionDetailsResponse>();
@@ -81,9 +92,16 @@ public class QuestionController {
 
     @RequestMapping(method = RequestMethod.GET, path ="/question/all/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestionsByUser(@PathVariable("userId") final String userId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, UserNotFoundException {
-
+        // Logic to handle Bearer <accesstoken>
+        // User can give only Access token or Bearer <accesstoken> as input.
+        String bearerToken = null;
+        try {
+            bearerToken = authorization.split("Bearer ")[1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            bearerToken = authorization;
+        }
         // Get all questions for requested user
-        List<QuestionEntity> allQuestions = getAllQuestionsByUserBusinessService.getAllQuestionsByUser(userId, authorization);
+        List<QuestionEntity> allQuestions = getAllQuestionsByUserBusinessService.getAllQuestionsByUser(userId, bearerToken);
 
         // Create response
         List<QuestionDetailsResponse> allQuestionDetailsResponse = new ArrayList<QuestionDetailsResponse>();
@@ -101,6 +119,14 @@ public class QuestionController {
 
     @RequestMapping(method = RequestMethod.PUT, path = "/question/edit/{questionId}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionEditResponse> editQuestionContent(final QuestionEditRequest questionEditRequest, @PathVariable("questionId") final String questionId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
+        // Logic to handle Bearer <accesstoken>
+        // User can give only Access token or Bearer <accesstoken> as input.
+        String bearerToken = null;
+        try {
+            bearerToken = authorization.split("Bearer ")[1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            bearerToken = authorization;
+        }
 
         // Creating question entity for further update
         QuestionEntity questionEntity = new QuestionEntity();
@@ -108,7 +134,7 @@ public class QuestionController {
         questionEntity.setUuid(questionId);
 
         // Return response with updated question entity
-        QuestionEntity updatedQuestionEntity = editQuestionContentBusinessService.editQuestionContent(questionEntity, authorization);
+        QuestionEntity updatedQuestionEntity = editQuestionContentBusinessService.editQuestionContent(questionEntity, bearerToken);
         QuestionEditResponse questionEditResponse = new QuestionEditResponse().id(updatedQuestionEntity.getUuid()).status("QUESTION EDITED");
         return new ResponseEntity<QuestionEditResponse>(questionEditResponse, HttpStatus.OK);
     }
@@ -116,8 +142,17 @@ public class QuestionController {
     @RequestMapping(method = RequestMethod.DELETE, path = "/question/delete/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionDeleteResponse> deleteQuestion(@PathVariable("questionId") final String questionId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
 
+        // Logic to handle Bearer <accesstoken>
+        // User can give only Access token or Bearer <accesstoken> as input.
+        String bearerToken = null;
+        try {
+            bearerToken = authorization.split("Bearer ")[1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            bearerToken = authorization;
+        }
+
         // Delete requested question
-        deleteQuestionBusinessService.userQuestionDelete(questionId, authorization);
+        deleteQuestionBusinessService.userQuestionDelete(questionId, bearerToken);
 
         // Return response
         QuestionDeleteResponse questionDeleteResponse = new QuestionDeleteResponse().id(questionId).status("QUESTION DELETED");
