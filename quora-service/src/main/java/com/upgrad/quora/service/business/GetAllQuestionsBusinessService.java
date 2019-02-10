@@ -9,7 +9,6 @@ import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,14 +24,19 @@ public class GetAllQuestionsBusinessService implements EndPointIdentifier {
     UserAuthTokenValidifierService userAuthTokenValidifierService;
 
     public List<QuestionEntity> getAllQuestions(String accessToken) throws AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
+        UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(accessToken);
 
-        List<QuestionEntity> questionEntityList= new ArrayList<>();
-
-        if(userAuthTokenValidifierService.userAuthTokenValidityCheck(accessToken,GET_ALL_QUESTIONS)){
-            questionEntityList= questionDao.getAllQuestions();
+        // Validate if user is signed in or not
+        if (userAuthEntity == null) {
+            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
         }
-        return questionEntityList;
+
+        // Validate if user has signed out
+        if (userAuthEntity.getLogoutAt() != null) {
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get all questions");
+        }
+
+        return questionDao.getAllQuestions();
     }
 
 }

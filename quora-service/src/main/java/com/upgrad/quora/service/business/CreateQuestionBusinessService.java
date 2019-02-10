@@ -19,19 +19,20 @@ public class CreateQuestionBusinessService {
     private UserDao userDao;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity createQuestion(final QuestionEntity questionEntity)  {
-            return questionDao.createQuestion(questionEntity);
+    public QuestionEntity createQuestion(QuestionEntity questionEntity, final String authorizationToken) throws AuthorizationFailedException {
+        UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorizationToken);
+
+        // Validate if user is signed in or not
+        if (userAuthEntity == null) {
+            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
         }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity verifyAuthToken(final String accessToken) throws AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
-        if(userAuthTokenEntity == null){
-            throw new AuthorizationFailedException("ATHR-001","User has not signed in");
-        }else if(userAuthTokenEntity.getLogoutAt()!=null) {
-            throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to post a question");
+        // Validate if user has signed out
+        if (userAuthEntity.getLogoutAt() != null) {
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to post a question");
         }
-        return userAuthTokenEntity;
 
-        }
+        questionEntity.setUser(userAuthEntity.getUser());
+        return questionDao.createQuestion(questionEntity);
+    }
 }

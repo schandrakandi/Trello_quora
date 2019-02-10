@@ -4,6 +4,7 @@ import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
+import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,27 +22,36 @@ public class EditQuestionContentBusinessService {
     private QuestionDao questionDao;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity verifyUserStatus(final String questionId, final String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
-        if (userAuthTokenEntity == null) {
+    public QuestionEntity editQuestionContent(final QuestionEntity questionEntity, final String authorizationToken) throws AuthorizationFailedException, InvalidQuestionException {
+        UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorizationToken);
+
+        // Validate if user is signed in or not
+        if (userAuthEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-        } else if (userAuthTokenEntity.getLogoutAt() != null) {
+        }
+
+        // Validate if user has signed out
+        if (userAuthEntity.getLogoutAt() != null) {
             throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to edit the question");
         }
-        QuestionEntity existingQuestionEntity = questionDao.getQuestionByQUuid(questionId);
+
+        // Validate if requested question exist or not
+        QuestionEntity existingQuestionEntity = questionDao.getQuestionByQUuid(questionEntity.getUuid());
         if (existingQuestionEntity == null) {
             throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
         }
-        if (existingQuestionEntity.getUser().getUserName().equalsIgnoreCase(userAuthTokenEntity.getUser().getUserName())) {
-            return questionDao.updateQuestion(existingQuestionEntity);
-        } else {
+
+        // Validate if current user is the owner of requested question
+        UserEntity currentUser = userAuthEntity.getUser();
+        UserEntity questionOwner = questionDao.getQuestionByQUuid(questionEntity.getUuid()).getUser();
+        if (currentUser.getId() != questionOwner.getId()) {
             throw new AuthorizationFailedException("ATHR-003", "Only the question owner can edit the question");
         }
-    }
 
+        questionEntity.setId(existingQuestionEntity.getId());
+        questionEntity.setUser(existingQuestionEntity.getUser());
+        questionEntity.setDate(existingQuestionEntity.getDate());
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity updateQuestion(final QuestionEntity updatedQuestionEntity){
-        return questionDao.updateQuestion(updatedQuestionEntity);
+        return questionDao.updateQuestion(questionEntity);
     }
 }
