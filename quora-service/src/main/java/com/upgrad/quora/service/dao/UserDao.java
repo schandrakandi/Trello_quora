@@ -91,4 +91,5 @@ public class UserDao {
         UserEntity userEntity = getUserByUuid(uuid);
         entityManager.remove(userEntity);
     }
+
 }

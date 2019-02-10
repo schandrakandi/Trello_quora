@@ -41,7 +41,7 @@ public class CheckAnswerBusinessService implements EndPointIdentifier {
             String user_id = userAuthTokenEntity.getUser().getUuid();
 
 
-            AnswerEntity answerEntity = answerDao.getAnswerById(answerId);
+            AnswerEntity answerEntity = answerDao.getAnswerByUuid(answerId);
 
             if (existingAnswerEntity == null) {
                 throw new InvalidAnswerException("ANS-001", "Entered answer uuid does not exist");
