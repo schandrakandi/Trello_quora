@@ -22,9 +22,6 @@ import java.util.List;
 public class AnswerController {
 
     @Autowired
-    AuthorizationService authorizationService;
-
-    @Autowired
     CreateAnswerBusinessService createAnswerBusinessService;
 
     @Autowired
@@ -45,6 +42,14 @@ public class AnswerController {
         @PathVariable("questionId") final String questionId, @RequestHeader("authorization") final String authorization)
         throws AuthorizationFailedException, InvalidQuestionException
     {
+        // Logic to handle Bearer <accesstoken>
+        // User can give only Access token or Bearer <accesstoken> as input.
+        String bearerToken = null;
+        try {
+            bearerToken = authorization.split("Bearer ")[1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            bearerToken = authorization;
+        }
 
         // Create answer entity
         final AnswerEntity answerEntity = new AnswerEntity();
@@ -52,7 +57,7 @@ public class AnswerController {
 
         // Return response with created answer entity
         final AnswerEntity createdAnswerEntity =
-            createAnswerBusinessService.createAnswer(answerEntity, questionId, authorization);
+            createAnswerBusinessService.createAnswer(answerEntity, questionId, bearerToken);
         AnswerResponse answerResponse = new AnswerResponse().id(createdAnswerEntity.getUuid()).status("ANSWER CREATED");
         return new ResponseEntity<AnswerResponse>(answerResponse, HttpStatus.CREATED);
     }
@@ -63,6 +68,14 @@ public class AnswerController {
         @PathVariable("answerId") final String answerId, @RequestHeader("authorization") final String authorization)
         throws AuthorizationFailedException, AnswerNotFoundException
     {
+        // Logic to handle Bearer <accesstoken>
+        // User can give only Access token or Bearer <accesstoken> as input.
+        String bearerToken = null;
+        try {
+            bearerToken = authorization.split("Bearer ")[1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            bearerToken = authorization;
+        }
 
         // Created answer entity for further update
         AnswerEntity answerEntity = new AnswerEntity();
@@ -70,7 +83,7 @@ public class AnswerController {
         answerEntity.setUuid(answerId);
 
         // Return response with updated answer entity
-        AnswerEntity updatedAnswerEntity = editAnswerBusinessService.editAnswerContent(answerEntity, authorization);
+        AnswerEntity updatedAnswerEntity = editAnswerBusinessService.editAnswerContent(answerEntity, bearerToken);
         AnswerEditResponse answerEditResponse = new AnswerEditResponse().id(updatedAnswerEntity.getUuid()).status("ANSWER EDITED");
         return new ResponseEntity<AnswerEditResponse>(answerEditResponse, HttpStatus.OK);
     }
@@ -80,9 +93,17 @@ public class AnswerController {
     public ResponseEntity<AnswerDeleteResponse> deleteAnswer(@PathVariable("answerId") final String answerId,
     @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, AnswerNotFoundException
     {
+        // Logic to handle Bearer <accesstoken>
+        // User can give only Access token or Bearer <accesstoken> as input.
+        String bearerToken = null;
+        try {
+            bearerToken = authorization.split("Bearer ")[1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            bearerToken = authorization;
+        }
 
         // Delete requested answer
-        deleteAnswerBusinessService.deleteAnswer(answerId, authorization);
+        deleteAnswerBusinessService.deleteAnswer(answerId, bearerToken);
 
         // Return response
         AnswerDeleteResponse answerDeleteResponse = new AnswerDeleteResponse().id(answerId).status("ANSWER DELETED");
@@ -93,9 +114,17 @@ public class AnswerController {
     public ResponseEntity<List<AnswerDetailsResponse>> getAllAnswersToQuestion (@PathVariable("questionId") final String questionId,
         @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, InvalidQuestionException
     {
+        // Logic to handle Bearer <accesstoken>
+        // User can give only Access token or Bearer <accesstoken> as input.
+        String bearerToken = null;
+        try {
+            bearerToken = authorization.split("Bearer ")[1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            bearerToken = authorization;
+        }
 
         // Get all answers for requested question
-        List<AnswerEntity> allAnswers = getAllAnswerBusinessService.getAllAnswersToQuestion(questionId, authorization);
+        List<AnswerEntity> allAnswers = getAllAnswerBusinessService.getAllAnswersToQuestion(questionId, bearerToken);
 
         // Create response
         List<AnswerDetailsResponse> allAnswersResponse = new ArrayList<AnswerDetailsResponse>();

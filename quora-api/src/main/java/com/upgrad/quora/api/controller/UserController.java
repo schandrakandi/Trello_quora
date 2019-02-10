@@ -2,7 +2,6 @@ package com.upgrad.quora.api.controller;
 
 
 import com.upgrad.quora.api.model.SigninResponse;
-
 import com.upgrad.quora.api.model.SignoutResponse;
 import com.upgrad.quora.api.model.SignupUserRequest;
 import com.upgrad.quora.api.model.SignupUserResponse;
@@ -27,10 +26,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Base64;
 import java.util.UUID;
 
+
+//RestController annotation specifies that this class represents a REST API(equivalent of @Controller + @ResponseBody)
 @RestController
 @RequestMapping("/")
 public class UserController {
-
+    //Required services are autowired to enable access to methods defined in respective Business services
     @Autowired
     private SignupBusinessService signupBusinessService;
 
@@ -56,9 +57,7 @@ public class UserController {
         userEntity.setAboutMe(signupUserRequest.getAboutMe());
         userEntity.setPassword(signupUserRequest.getPassword());
         userEntity.setRole("nonadmin");
-        /*
-        final UserEntity createdUserEntity = signupBusinessService.signup(userEntity,signupUserRequest.getUserName(),signupUserRequest.getEmailAddress());
-       */
+        // Call the business logic
         final UserEntity createdUserEntity = signupBusinessService.signup(userEntity);
         SignupUserResponse userResponse = new SignupUserResponse().id(createdUserEntity.getUuid()).status("USER SUCCESSFULLY REGISTERED");
         return new ResponseEntity<SignupUserResponse>(userResponse, HttpStatus.CREATED);
@@ -84,8 +83,16 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, path = "/user/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignoutResponse> loginOut(@RequestHeader("authorization") final String accessToken) throws SignOutRestrictedException {
         SignoutResponse signoutResponse = null;
+        // Logic to handle Bearer <accesstoken>
+        // User can give only Access token or Bearer <accesstoken> as input.
+        String bearerToken = null;
+        try {
+            bearerToken = accessToken.split("Bearer ")[1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            bearerToken = accessToken;
+        }
 
-        UserAuthTokenEntity userAuthToken = signoutBusinessService.signOutService(accessToken);
+        UserAuthTokenEntity userAuthToken = signoutBusinessService.signOutService(bearerToken);
         if(userAuthToken!=null){
             signoutResponse = new SignoutResponse().id(userAuthToken.getUuid()).message("SIGN OUT SUCCESSFULLY");
         }
