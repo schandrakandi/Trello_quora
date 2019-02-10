@@ -41,6 +41,10 @@ public class UserController {
     @Autowired
     private SignoutBusinessService signoutBusinessService;
 
+    /**
+     * @param  signupUserRequest the first {@code SignupUserRequest} to signup a particular user with details.
+     * @return ResponseEntity is returned with Status CREATED.
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/user/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignupUserResponse> signup(final SignupUserRequest signupUserRequest) throws SignUpRestrictedException {
 
@@ -63,6 +67,10 @@ public class UserController {
         return new ResponseEntity<SignupUserResponse>(userResponse, HttpStatus.CREATED);
     }
 
+    /**
+     * @param  authorization the first {@code String} to signin a particular user and check access.
+     * @return ResponseEntity is returned with Status OK.
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/user/signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SigninResponse> login(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
         String[] authorizationArray = authorization.split("Basic ");
@@ -80,6 +88,10 @@ public class UserController {
         return new ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK);
     }
 
+    /**
+     * @param  accessToken the first {@code String} to signout a particular user.
+     * @return ResponseEntity is returned with Status OK.
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/user/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignoutResponse> loginOut(@RequestHeader("authorization") final String accessToken) throws SignOutRestrictedException {
         SignoutResponse signoutResponse = null;

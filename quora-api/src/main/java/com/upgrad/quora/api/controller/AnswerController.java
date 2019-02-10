@@ -37,7 +37,7 @@ public class AnswerController {
     QuestionDao questionDao;
 
     /**
-     * @param  answerRequest the first {@code AnswerRequest} with answer to create.
+     * @param  answerRequest the first {@code AnswerRequest} to create a particular answer.
      * @param  questionId the second {@code String} to associate the answer to that question.
      * @param  authorization the third {@code String} to check if the access is available.
      * @return ResponseEntity is returned with Status CREATED

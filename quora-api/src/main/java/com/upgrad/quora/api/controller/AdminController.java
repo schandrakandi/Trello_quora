@@ -18,7 +18,7 @@ public class AdminController {
     //Required services are autowired to enable access to methods defined in respective Business services
     @Autowired
     private UserAdminBusinessService userAdminBusinessService;
-    
+
     /**
      * @param  userUuid the first {@code String} to delete the particular user.
      * @param  accessToken the second {@code String} to check if the access is available.
