@@ -29,8 +29,10 @@ The following API endpoints are implemented in 'AdminController' class:
 
 This endpoint is used to delete a user from the Quora Application. Only an admin is authorized to access this endpoint.
 
-REST API endpoints - 2
 
+
+REST API endpoints - 2 
+------------------------------------------------------------------------------------------------------------------------------
 The following API endpoints are implemented in 'QuestionController' class:
 ------------------------------------------------------------------------------------------------------------------------------
 1. createQuestion - "/question/create"
