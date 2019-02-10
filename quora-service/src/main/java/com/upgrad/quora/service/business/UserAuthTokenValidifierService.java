@@ -7,6 +7,8 @@ import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
+
 /**
  * Method to provide service for validating a user authentication token through a access token
  */
@@ -70,4 +72,16 @@ public class UserAuthTokenValidifierService implements EndPointIdentifier {
             }
         }
     }
+
+    boolean userSignOutStatus(String authorizationToken) {
+        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
+        ZonedDateTime loggedOutStatus = userAuthTokenEntity.getLogoutAt();
+        ZonedDateTime loggedInStatus = userAuthTokenEntity.getLoginAt();
+        if(loggedOutStatus != null && loggedOutStatus.isAfter(loggedInStatus))
+        {
+            return true;
+        }
+        else return false;
+    }
+
 }
