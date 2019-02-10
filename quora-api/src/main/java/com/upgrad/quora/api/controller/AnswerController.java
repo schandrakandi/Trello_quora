@@ -2,10 +2,7 @@ package com.upgrad.quora.api.controller;
 
 
 import com.upgrad.quora.api.model.*;
-import com.upgrad.quora.service.business.AuthorizationService;
-import com.upgrad.quora.service.business.CreateAnswerBusinessService;
-import com.upgrad.quora.service.business.DeleteAnswerBusinessService;
-import com.upgrad.quora.service.business.EditAnswerBusinessService;
+import com.upgrad.quora.service.business.*;
 import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.exception.AnswerNotFoundException;
@@ -16,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/")
@@ -33,7 +33,8 @@ public class AnswerController {
     @Autowired
     DeleteAnswerBusinessService deleteAnswerBusinessService;
 
-
+    @Autowired
+    GetAllAnswerBusinessService getAllAnswerBusinessService;
 
     @Autowired
     QuestionDao questionDao;
@@ -77,5 +78,26 @@ public class AnswerController {
         // Return response
         AnswerDeleteResponse answerDeleteResponse = new AnswerDeleteResponse().id(answerId).status("ANSWER DELETED");
         return new ResponseEntity<AnswerDeleteResponse>(answerDeleteResponse, HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/answer/all/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<AnswerDetailsResponse>> getAllAnswersToQuestion (@PathVariable("questionId") final String questionId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
+
+        // Get all answers for requested question
+        List<AnswerEntity> allAnswers = getAllAnswerBusinessService.getAllAnswersToQuestion(questionId, authorization);
+
+        // Create response
+        List<AnswerDetailsResponse> allAnswersResponse = new ArrayList<AnswerDetailsResponse>();
+
+        for (int i = 0; i < allAnswers.size(); i++) {
+            AnswerDetailsResponse answerDetailsResponse = new AnswerDetailsResponse()
+                    .answerContent(allAnswers.get(i).getAnswer())
+                    .questionContent(allAnswers.get(i).getQuestion().getContent())
+                    .id(allAnswers.get(i).getUuid());
+            allAnswersResponse.add(answerDetailsResponse);
+        }
+
+        // Return response
+        return new ResponseEntity<List<AnswerDetailsResponse>>(allAnswersResponse, HttpStatus.FOUND);
     }
 }
