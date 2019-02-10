@@ -93,6 +93,15 @@ public class PasswordCryptographyProvider {
     private static byte[] getBase64DecodedStringAsBytes(String decode) {
         return Base64.getDecoder().decode(decode);
     }
+
+    /**
+     * Added main method for test purpose in swagger for getting Base64 encoded string of userName and password
+     * @param args
+     */
+    public static void main(String[] args){
+        String credential = "sharvi23:123@sharvvi";
+        System.out.println(Base64.getEncoder().encodeToString(credential.getBytes()));
+    }
 }
 
 
