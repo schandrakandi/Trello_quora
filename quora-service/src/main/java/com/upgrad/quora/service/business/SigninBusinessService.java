@@ -20,6 +20,11 @@ public class SigninBusinessService {
     @Autowired
     private PasswordCryptographyProvider cryptographyProvider;
 
+    /**
+     * @param  username the first {@code String} username of the user.
+     * @param  password the second {@code String} password of the user.
+     * @return List of QuestionEntity objects.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthTokenEntity authenticate(final String username, final String password) throws AuthenticationFailedException {
         UserAuthTokenEntity userAuthTokenEntity = null;

@@ -17,6 +17,11 @@ public class UserCommonService {
     @Autowired
     private UserAuthTokenValidifierService userAuthTokenValidifierService;
 
+    /**
+     * @param  userUuid the first {@code String} id to fetch the user
+     * @param  authorizationToken the second {@code String} to check if the access is available.
+     * @return UserEntity
+     */
     public UserEntity getUser(final String userUuid, final String authorizationToken) throws
             AuthorizationFailedException, UserNotFoundException {
 

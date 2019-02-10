@@ -22,6 +22,11 @@ public class GetAllQuestionsByUserBusinessService {
     @Autowired
     private QuestionDao questionDao;
 
+    /**
+     * @param  userId the first {@code String} to get all questions related to the user.
+     * @param  authorizationToken the second {@code String} to check if the access is available.
+     * @return List of QuestionEntity objects.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public List<QuestionEntity> getAllQuestionsByUser(final String userId, final String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
         UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorizationToken);

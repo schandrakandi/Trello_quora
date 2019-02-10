@@ -18,6 +18,10 @@ public class SignoutBusinessService {
     @Autowired
     private UserDao userDao;
 
+    /**
+     * @param  accessToken the first {@code String} to signout a user.
+     * @return List of QuestionEntity objects.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthTokenEntity signOutService(String accessToken) throws SignOutRestrictedException {
         UserAuthTokenEntity userAuthTokenEntity = null;

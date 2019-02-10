@@ -17,6 +17,10 @@ public class SignupBusinessService {
     @Autowired
     private PasswordCryptographyProvider passwordCryptographyProvider;
 
+    /**
+     * @param  userEntity the first {@code UserEntity} to signup a user.
+     * @return UserEntity objects.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public UserEntity signup(UserEntity userEntity) throws SignUpRestrictedException {
         if (!isUserExist(userEntity) && !isUserEmailExist(userEntity)) {
@@ -29,6 +33,10 @@ public class SignupBusinessService {
 
     }
 
+    /**
+     * @param  userEntity the first {@code UserEntity} to check if the user already exists.
+     * @return true or false
+     */
     private boolean isUserExist(UserEntity userEntity) throws SignUpRestrictedException {
         UserEntity entity = userDao.getUserByUserName(userEntity.getUserName());
         if (entity != null) {
@@ -38,6 +46,10 @@ public class SignupBusinessService {
         }
     }
 
+    /**
+     * @param  userEntity the first {@code UserEntity} to check if the user email already exists.
+     * @return true or false
+     */
     private boolean isUserEmailExist(UserEntity userEntity) throws SignUpRestrictedException {
         UserEntity emailEntity = userDao.getUserByEmail(userEntity.getEmail());
         if (emailEntity != null) {

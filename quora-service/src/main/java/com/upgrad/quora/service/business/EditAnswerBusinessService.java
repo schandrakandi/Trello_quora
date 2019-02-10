@@ -21,6 +21,11 @@ public class EditAnswerBusinessService {
     @Autowired
     private UserDao userDao;
 
+    /**
+     * @param  answerEntity the first {@code AnswerEntity} object to update stored answer
+     * @param  authorization the second {@code String} to check if the access is available.
+     * @return AnswerEntity object is returned after persisting in the database.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity editAnswerContent(final AnswerEntity answerEntity, final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorization);

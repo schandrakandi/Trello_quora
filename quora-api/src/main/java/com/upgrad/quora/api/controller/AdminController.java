@@ -19,6 +19,11 @@ public class AdminController {
     @Autowired
     private UserAdminBusinessService userAdminBusinessService;
 
+    /**
+     * @param  userUuid the first {@code String} to delete the particular user.
+     * @param  accessToken the second {@code String} to check if the access is available.
+     * @return ResponseEntity is returned with Status OK.
+     */
     @RequestMapping(method = RequestMethod.DELETE, path = "/admin/user/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity < UserDeleteResponse > userDelete(@PathVariable("userId") final String userUuid, @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
         // Logic to handle Bearer <accesstoken>

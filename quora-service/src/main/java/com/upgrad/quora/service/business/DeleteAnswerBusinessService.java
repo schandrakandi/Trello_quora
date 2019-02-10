@@ -18,6 +18,10 @@ public class DeleteAnswerBusinessService {
     @Autowired
     private AnswerDao answerDao;
 
+    /**
+     * @param  answerId the first {@code String} id of the answer to be deleted
+     * @param  authorization the second {@code String} to check if the access is available.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public void deleteAnswer(final String answerId, final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
         UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorization);

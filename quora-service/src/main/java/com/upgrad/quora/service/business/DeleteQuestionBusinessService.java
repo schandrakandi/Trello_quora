@@ -19,6 +19,10 @@ public class DeleteQuestionBusinessService {
     @Autowired
     private QuestionDao questionDao;
 
+    /**
+     * @param  questionId the first {@code String} id of the question to be deleted
+     * @param  authorization the second {@code String} to check if the access is available.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public void userQuestionDelete(final String questionId, final String authorization) throws InvalidQuestionException, AuthorizationFailedException {
         UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorization);
