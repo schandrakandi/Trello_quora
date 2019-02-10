@@ -71,4 +71,24 @@ public class UserDao {
         }
     }
 
+    public UserEntity authenticateUser(final String userName,final String password) {
+        try {
+            return entityManager.createNamedQuery("authenticateUserQuery", UserEntity.class).setParameter("userName", userName).setParameter("password",password).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
+    public UserAuthTokenEntity updateUserLogOut(final UserAuthTokenEntity userAuthTokenEntity) {
+        try {
+            return entityManager.merge(userAuthTokenEntity);
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
+    public void deleteUser(String uuid) {
+        UserEntity userEntity = getUserByUuid(uuid);
+        entityManager.remove(userEntity);
+    }
 }
