@@ -81,7 +81,8 @@ public class UserAdminBusinessService {
         {
             throw new UserNotFoundException("USR-001", "User with entered uuid to be deleted does not exist");
         }else{
-            return userDao.deleteUser(userEntityToDelete);
+            userDao.deleteUser(userUuid);
+            return userUuid;
         }
     }
 }

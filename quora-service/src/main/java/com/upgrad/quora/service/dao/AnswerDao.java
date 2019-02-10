@@ -17,9 +17,9 @@ public class AnswerDao {
         return answerEntity;
     }
 
-    public AnswerEntity getAnswerById(String questionId) {
+    public AnswerEntity getAnswerByUuid(String questionId) {
         try {
-            return entityManager.createNamedQuery("answerById", AnswerEntity.class).getSingleResult();
+            return entityManager.createNamedQuery("answerEntityByUuid", AnswerEntity.class).setParameter("uuid", questionId).getSingleResult();
 
         } catch (NoResultException nre) {
 
@@ -27,9 +27,12 @@ public class AnswerDao {
         }
     }
 
-    public AnswerEntity updateAnswer(AnswerEntity answerEntity) {
-
+    public AnswerEntity editAnswerContent(final AnswerEntity answerEntity) {
         return entityManager.merge(answerEntity);
+    }
 
+    public void userAnswerDelete(final String answerId) {
+        AnswerEntity answerEntity = getAnswerByUuid(answerId);
+        entityManager.remove(answerEntity);
     }
 }
