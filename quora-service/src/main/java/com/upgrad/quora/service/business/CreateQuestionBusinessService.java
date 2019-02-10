@@ -18,6 +18,11 @@ public class CreateQuestionBusinessService {
     @Autowired
     private UserDao userDao;
 
+    /**
+     * @param  questionEntity the first {@code QuestionEntity} object to store question
+     * @param  authorizationToken the second {@code String} to check if the access is available.
+     * @return QuestionEntity object is returned after persisting in the database.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public QuestionEntity createQuestion(QuestionEntity questionEntity, final String authorizationToken) throws AuthorizationFailedException {
         UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorizationToken);

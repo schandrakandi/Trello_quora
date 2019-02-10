@@ -19,6 +19,11 @@ public class UserAdminBusinessService {
     @Autowired
     private UserAuthTokenValidifierService userAuthTokenValidifierService ;
 
+    /**
+     * @param  userUuid the first {@code AnswerEntity} id to delete the user
+     * @param  authorizationToken the second {@code String} to check if the access is available.
+     * @return id of the deleted user
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public String deleteUser(final String userUuid, final String authorizationToken) throws
             AuthorizationFailedException, UserNotFoundException

@@ -25,6 +25,11 @@ public class GetAllAnswerBusinessService {
     @Autowired
     AnswerDao answerDao;
 
+    /**
+     * @param  questionId the first {@code QuestionEntity} id to fetch all answers to related question.
+     * @param  authorization the second {@code String} to check if the access is available.
+     * @return List of AnswerEntity objects.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public List<AnswerEntity> getAllAnswersToQuestion(final String questionId, final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
         UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorization);

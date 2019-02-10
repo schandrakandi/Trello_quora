@@ -18,6 +18,10 @@ public class UserAuthTokenValidifierService implements EndPointIdentifier {
     @Autowired
     UserDao userDao;
 
+    /**
+     * @param  authorizationToken the first {@code String} to check if the access is available.
+     * @return true or false
+     */
     boolean userSignOutStatus(String authorizationToken) {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
         ZonedDateTime loggedOutStatus = userAuthTokenEntity.getLogoutAt();

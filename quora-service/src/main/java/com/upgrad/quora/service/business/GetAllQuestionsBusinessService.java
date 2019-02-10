@@ -23,6 +23,10 @@ public class GetAllQuestionsBusinessService implements EndPointIdentifier {
     @Autowired
     UserAuthTokenValidifierService userAuthTokenValidifierService;
 
+    /**
+     * @param  accessToken the first {@code String} to check if the access is available.
+     * @return List of AnswerEntity objects.
+     */
     public List<QuestionEntity> getAllQuestions(String accessToken) throws AuthorizationFailedException {
         UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(accessToken);
 

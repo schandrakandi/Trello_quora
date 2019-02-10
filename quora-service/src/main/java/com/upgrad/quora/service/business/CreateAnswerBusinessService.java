@@ -29,6 +29,12 @@ public class CreateAnswerBusinessService implements EndPointIdentifier {
     @Autowired
     QuestionDao questionDao;
 
+    /**
+     * @param  answerEntity the first {@code AnswerEntity} object to store answer
+     * @param  questionId the second {@code String} to associate the answer to that question.
+     * @param  authorization the third {@code String} to check if the access is available.
+     * @return AnswerEntity object is returned after persisting in the database.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity createAnswer(final AnswerEntity answerEntity, final String questionId, final String authorization) throws AuthorizationFailedException, InvalidQuestionException {
         UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorization);

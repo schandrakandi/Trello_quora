@@ -21,6 +21,11 @@ public class EditQuestionContentBusinessService {
     @Autowired
     private QuestionDao questionDao;
 
+    /**
+     * @param  questionEntity the first {@code QuestionEntity} object to update stored question.
+     * @param  authorizationToken the second {@code String} to check if the access is available.
+     * @return QuestionEntity object is returned after updating in the database.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public QuestionEntity editQuestionContent(final QuestionEntity questionEntity, final String authorizationToken) throws AuthorizationFailedException, InvalidQuestionException {
         UserAuthTokenEntity userAuthEntity = userDao.getUserAuthToken(authorizationToken);
