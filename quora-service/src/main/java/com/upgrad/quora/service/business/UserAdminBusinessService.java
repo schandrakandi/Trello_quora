@@ -23,16 +23,16 @@ public class UserAdminBusinessService {
 
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
         UserEntity userEntity = userDao.getUserByUuid(userUuid);
+
+        //Check if user has signed-in
         if(userAuthTokenEntity == null)
         {
             throw new AuthorizationFailedException("ATHR-001","User has not signed in");
         }
 
+        //Check if user has signed-out
         ZonedDateTime loggedOutStatus = userAuthTokenEntity.getLogoutAt();
         ZonedDateTime loggedInStatus = userAuthTokenEntity.getLoginAt();
-        /**Can check for access token expiry
-        final ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime authTokenExpiryTime = userAuthTokenEntity.getExpiresAt();*/
         if(loggedOutStatus != null && loggedOutStatus.isAfter(loggedInStatus))
         {
             throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to get user details");
@@ -50,26 +50,25 @@ public class UserAdminBusinessService {
             AuthorizationFailedException, UserNotFoundException
     {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
-        String loggedInUserId = userAuthTokenEntity.getUuid();
-        UserEntity loggedUser = userDao.getUserByUuid(loggedInUserId);
-        String role = loggedUser.getRole();
+
         //Check if user has signed-in
         if(userAuthTokenEntity == null)
         {
             throw new AuthorizationFailedException("ATHR-001","User has not signed in");
         }
+
         //Check if user has signed-out
         ZonedDateTime loggedOutStatus = userAuthTokenEntity.getLogoutAt();
         ZonedDateTime loggedInStatus = userAuthTokenEntity.getLoginAt();
-        /**Can check for access token expiry
-         * final ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime authTokenExpiryTime = userAuthTokenEntity.getExpiresAt();*/
         if(loggedOutStatus != null && loggedOutStatus.isAfter(loggedInStatus))
         {
             throw new AuthorizationFailedException("ATHR-002","User is signed out");
         }
 
         //Check if the user has admin privilege
+        String loggedInUserId = userAuthTokenEntity.getUuid();
+        UserEntity loggedUser = userDao.getUserByUuid(loggedInUserId);
+        String role = loggedUser.getRole();
         if(role.equals("nonadmin"))
         {
             throw new AuthorizationFailedException("ATHR-003","Unauthorized Access, Entered user is not an admin");

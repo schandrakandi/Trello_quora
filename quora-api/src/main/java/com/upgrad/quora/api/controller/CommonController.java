@@ -21,7 +21,7 @@ public class CommonController {
     private UserAdminBusinessService userAdminBusinessService;
 
     @RequestMapping(method = RequestMethod.GET, path = "/userprofile/{userId}",  produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<UserDetailsResponse> UserProfile(@PathVariable("userId") final String userUuid,@RequestHeader("access-token") final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
+    public ResponseEntity<UserDetailsResponse> userProfile(@PathVariable("userId") final String userUuid,@RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
 
         final UserEntity userEntity = userAdminBusinessService.getUser(userUuid,accessToken);
         UserDetailsResponse userDetailsResponse = new UserDetailsResponse().firstName(userEntity.getFirstName())
